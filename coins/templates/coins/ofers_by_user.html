@@ -1,0 +1,43 @@
+{% extends 'coins/base.html' %}
+
+{% block title %}
+{{user}}'s offers
+{% endblock %}
+
+{% block content %}
+{% for offer in object_list %}
+    <div>  
+        <h3>Coin offer: {{ offer.id }}</h3> 
+        <div class="row" >
+            <div class="col-3">
+                <img src="{{ offer.coin_to_get.img_front.url }}" class="w-100">
+                {{ offer.coin_to_get }}
+                
+            </div>  
+            <div class="col-3">
+                <img src="{{ offer.coin_to_give.img_front.url }}" class="w-100">
+                {{ offer.coin_to_give }}                
+            </div>    
+            <div class="col-3 pt-5">
+                <div>
+                    <form action="{% url 'coins:accept-offer' pk=offer.id %}" method="post"> 
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-success px-5 py-2">
+                            <i class="fa-solid fa-check"></i>
+                        </button>                        
+                    </form>
+                </div>
+                <br>
+                <div>
+                    <form action="{% url 'coins:remove-offer' pk=offer.id %}" method="post"> 
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger px-5 py-2">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>                        
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+{% endblock %}

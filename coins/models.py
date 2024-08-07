@@ -5,6 +5,10 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, related_name='profile', on_delete=models.CASCADE)
     user_pic = models.ImageField(blank=True, upload_to='coins/user_pic/')
 
+    def has_offers_under_consideration(self):
+        offers = Offer.objects.filter(responder=self.user, status='c')
+        return offers.exists()
+    
 class Continent(models.Model):
     name = models.CharField(max_length=150, unique=True)
 
@@ -80,4 +84,15 @@ class Box(models.Model):
 
     def __str__(self):
         return self.name
+    
+
+status_choices = [('с', 'under consideration'), ('d', 'done')]
+
+class Offer(models.Model):
+    coin_to_get = models.OneToOneField(Coin, related_name='offer_get', on_delete=models.CASCADE)
+    coin_to_give = models.OneToOneField(Coin, related_name='offer_give', on_delete=models.CASCADE)
+    author = models.OneToOneField(User, related_name='offers_made', on_delete=models.CASCADE)
+    responder = models.OneToOneField(User, related_name='offers_look', on_delete=models.CASCADE)
+    status = models.CharField(max_length=1, choices=status_choices, default='c')
+    created = models.DateTimeField(auto_now_add=True) 
 

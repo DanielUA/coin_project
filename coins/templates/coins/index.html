@@ -1,12 +1,12 @@
-
-    <div class="row">
-        <div class="col-2">
-            {% for contine{% extends 'coins/base.html' %}
+{% extends 'coins/base.html' %}
 
 {% block title %}
     Collecto Hub
 {% endblock %}
-{% block content %}nt in continent_list %}
+{% block content %}
+    <div class="row">
+        <div class="col-2">
+            {% for continent in continent_list %}
                 <div>
                     {{ continent }}
                 </div>
@@ -23,6 +23,8 @@
                         {{ coin.country }} 
                         <br>
                         {{ coin.denomination }} {{ coin.year }}
+                        <br>
+                        {{ coin.owner}}
                     </p>
                 </div>        
                 {% endfor %}

@@ -8,6 +8,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <title>{% block title %}{% endblock %}</title>  
     <link rel="shortcut icon" href="{% static 'coins/img/coins.png' %}" type="image/x-icon">      
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 </head>
 <body>
     <div class="container">
@@ -31,6 +32,12 @@
                         admin panel  
                     </a>
                     {% endif %}
+
+                    {% if user.profile.has_offers_under_consideration %}
+                    <br>
+                        <a href="{% url 'coins:user-offers' %}"> You have offers to consider </a>
+                    {% endif %}
+
                 {% else %}
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-login">
                         Sign in
