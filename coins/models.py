@@ -4,6 +4,10 @@ from django.contrib.auth.models import User
 class UserProfile(models.Model):
     user = models.OneToOneField(User, related_name='profile', on_delete=models.CASCADE)
     user_pic = models.ImageField(blank=True, upload_to='coins/user_pic/')
+    phone = models.CharField(max_length=20)
+    postcode = models.CharField(max_length=10)
+    addres = models.CharField(max_length=150)
+    city =  models.CharField(max_length=20)
 
     def has_offers_under_consideration(self):
         offers = Offer.objects.filter(responder=self.user, status='c')
@@ -89,10 +93,10 @@ class Box(models.Model):
 status_choices = [('с', 'under consideration'), ('d', 'done')]
 
 class Offer(models.Model):
-    coin_to_get = models.OneToOneField(Coin, related_name='offer_get', on_delete=models.CASCADE)
-    coin_to_give = models.OneToOneField(Coin, related_name='offer_give', on_delete=models.CASCADE)
-    author = models.OneToOneField(User, related_name='offers_made', on_delete=models.CASCADE)
-    responder = models.OneToOneField(User, related_name='offers_look', on_delete=models.CASCADE)
+    coin_to_get = models.ForeignKey(Coin, related_name='offer_get', on_delete=models.CASCADE)
+    coin_to_give = models.ForeignKey(Coin, related_name='offer_give', on_delete=models.CASCADE)
+    author = models.ForeignKey(User, related_name='offers_made', on_delete=models.CASCADE)
+    responder = models.ForeignKey(User, related_name='offers_look', on_delete=models.CASCADE)
     status = models.CharField(max_length=1, choices=status_choices, default='c')
-    created = models.DateTimeField(auto_now_add=True) 
+    created = models.DateTimeField(auto_now_add=True)
 

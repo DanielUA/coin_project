@@ -19,7 +19,8 @@ class CoinAdmin(admin.ModelAdmin):
         '__str__',
         'material',
         'box',
-        'circulation'
+        'circulation',
+        'owner',
         ]
     list_filter = [
         'box',
