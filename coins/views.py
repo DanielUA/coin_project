@@ -1,5 +1,5 @@
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.views.generic import TemplateView, DetailView, ListView
 from django.contrib.auth import logout, login, authenticate
@@ -10,7 +10,7 @@ from .forms import *
 class IndexView(TemplateView):
     template_name = 'coins/index.html'
     extra_context = {
-        "coin_list": Coin.objects.order_by('?'),
+        "coin_list": Coin.objects.filter(status='a').order_by('?'),
         "continent_list": Continent.objects.order_by("name"),
     }
     
@@ -48,7 +48,7 @@ def make_offer(request):
     coin_to_give_id = request.POST.get('coin_to_give_id')
     if coin_to_get_id and coin_to_give_id:        
         coin_to_get = Coin.objects.get(id=coin_to_get_id)
-        coin_to_give = Coin.objects.get(id=coin_to_give_id)
+        coin_to_give = Coin.objects.get(id=coin_to_give_id)          
         new_offer = Offer(
             coin_to_get=coin_to_get,
             coin_to_give=coin_to_give,
@@ -80,10 +80,12 @@ def accept_offer(request, pk):
     coin_to_get = offer.coin_to_get
     coin_to_give = offer.coin_to_give
     coin_to_get.owner = offer.author
+    coin_to_get.status = 'e'
     coin_to_get.save()
     coin_to_give.owner = offer.responder
-    coin_to_give.save()    
-    offer.status = 'd'
+    coin_to_give.status = 'e'  
+    coin_to_give.save()     
+    offer.status = 'd'    
     offer.save()
     return HttpResponseRedirect(reverse('coins:index'))
 
@@ -95,8 +97,6 @@ class CreateUserView(TemplateView):
     }
 
 def create_new_account(request):
-    print(request.POST)
-    print(request.FILES)
     username = request.POST.get('username')
     password1 = request.POST.get('password1')
     password2 = request.POST.get('password2')
@@ -119,3 +119,35 @@ def create_new_account(request):
 
 
     return HttpResponseRedirect(reverse('coins:index'))
+
+class UserCabinetView(DetailView):
+    model = User
+    template_name = 'coins/user_cabinet.html'
+    context_object_name = 'owner'
+
+def coin_change_status(request):
+    pk = request.POST.get('pk')
+    status = request.POST.get('status')
+    coin = Coin.objects.get(id=pk)
+    if status == 'a' or status == 'w':        
+        coin.status = status
+        coin.save()
+    return HttpResponseRedirect(reverse('coins:user-cabinet', kwargs={"pk":coin.owner.id}))
+
+class ContinentDetailView(DetailView):
+    model = Continent
+
+class CountryDetailView(DetailView):
+    model = Country
+
+class CoinsToSendListView(ListView):
+    model = Coin
+    queryset = Coin.objects.filter(status='w')
+    template_name = 'coins/coins_to_send.html'
+
+def coin_sended(request):
+    pk = request.POST.get('pk')
+    coin = Coin.objects.get(id=pk)
+    coin.status = 's'
+    coin.save()
+    return HttpResponseRedirect(reverse('coins:coins-to-send'))

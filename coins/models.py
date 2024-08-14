@@ -13,12 +13,26 @@ class UserProfile(models.Model):
         offers = Offer.objects.filter(responder=self.user, status='c')
         return offers.exists()
     
+    def active_coins(self):
+        return self.user.coins.filter(status='a')
+    
+    def exchanged_coins(self):
+        return self.user.coins.filter(status='e')
+    
+    
 class Continent(models.Model):
     name = models.CharField(max_length=150, unique=True)
 
     class Meta:
         verbose_name = "Continent"
         verbose_name_plural = "Continents"
+
+    def get_coins(self):
+        return Coin.objects.filter(country__continent=self)
+    
+    def get_coutries_has_coins(self):
+
+        return self.countries.filter(coins__isnull=False).distinct()
 
     def __str__(self):
         return self.name
@@ -57,7 +71,7 @@ material_choices = [
     ("titanium", "ti")
 ]
 
-
+status_choices_coin = [('a', 'active'), ('e', 'exchanged'),('w', 'wait for delivery'), ('s', 'sent')]
 
 class Coin(models.Model):
     img_front = models.ImageField(upload_to='products_image', blank=True)
@@ -75,7 +89,8 @@ class Coin(models.Model):
     circulation = models.IntegerField(blank=True, null=True)  # Circulation
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='coins')
     box = models.ForeignKey('Box', on_delete=models.SET_NULL, blank=True, null=True, related_name='coins')
-
+    status = models.CharField(max_length=1, choices=status_choices_coin, default='a')
+    
     class Meta:
         verbose_name = 'Coin'
         verbose_name_plural = 'Coins'

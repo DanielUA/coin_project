@@ -1,0 +1,26 @@
+{% extends 'coins/base.html' %}
+
+{% block title %}
+    {{ continent.name }} - Coins
+{% endblock %}
+{% block content %}
+<h1>Coins of {{ continent.name }}</h1>
+
+    {% for country in continent.get_coutries_has_coins %}
+    <div>
+        <a href="{% url 'coins:country-detail' pk=country.id%}"> {{ country }} </a>
+    </div>
+    {% endfor %}
+    <ul>
+        {% for coin in continent.get_coins %}
+            <li>
+                <strong>{{ coin.denomination }} - {{ coin.year }}</strong><br>
+                Country: {{ coin.country.name }}<br>                
+                <img src="{{ coin.img_front.url }}" alt="Front Image" width="100"><br>
+                <img src="{{ coin.img_back.url }}" alt="Back Image" width="100"><br>
+                Status: {{ coin.get_status_display }}
+            </li>
+        {% endfor %}
+    </ul>
+
+{% endblock %}

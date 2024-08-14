@@ -18,4 +18,11 @@ urlpatterns = [
     path('offer/<int:pk>/accept/', views.accept_offer, name='accept-offer'),
     path('create/account/page/', views.CreateUserView.as_view(), name='create-account-page'),
     path('create/account/new/', views.create_new_account, name='create-new-account'),
+    path('user/cabinet/<int:pk>', views.UserCabinetView.as_view(), name='user-cabinet'),
+    path('coin/change/status/', views.coin_change_status, name='coin-change-status'),
+    path('continent/<int:pk>/', views.ContinentDetailView.as_view(), name='continent-detail'),
+    path('country/<int:pk>/', views.CountryDetailView.as_view(), name='country-detail'),
+    path('coins/send/', views.CoinsToSendListView.as_view(), name='coins-to-send'),
+    path('coin/sended/', views.coin_sended, name='coins-sended'),
+
 ]

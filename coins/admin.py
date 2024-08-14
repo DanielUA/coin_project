@@ -21,6 +21,7 @@ class CoinAdmin(admin.ModelAdmin):
         'box',
         'circulation',
         'owner',
+        'status',
         ]
     list_filter = [
         'box',
