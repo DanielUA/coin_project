@@ -158,6 +158,12 @@ def coin_sended(request):
     coin = Coin.objects.get(id=pk)
     coin.status = 's'
     coin.save()
+    new_message = Message(
+        text = f'Coin(s) have been sent to you: {coin}\nthis message was generated automatically' ,
+        author = User.objects.get(id=1),
+        recipient = coin.owner
+    )
+    new_message.save()
     return HttpResponseRedirect(reverse('coins:coins-to-send'))
 
 class MailBox(DetailView):
@@ -195,22 +201,3 @@ def message_from_cabinet(request, pk):
     new_message.save()
     return HttpResponseRedirect(reverse('coins:user-cabinet', args=[pk]))
 
-# def message_from_cabinet(request, pk):
-#     if request.method == 'POST':
-#         f = MessageForm(request.POST)
-#         if f.is_valid():
-#             new_message = f.save(commit=False)
-#             new_message.author_id = request.POST.get('author_id')
-#             new_message.recipient_id = request.POST.get('recipient_id')
-#             new_message.save()
-#             return redirect('coins:coin-detail', pk=pk)
-#         else:
-#             print(f.errors)  # This will print the form errors to the console
-#             owner = get_object_or_404(User, pk=pk)
-#             return render(request, 'coins/user_cabinet.html', {
-#                 'owner': owner,
-#                 'form': f,
-#                 'error': 'There was an issue with your submission.'
-#             })
-#     else:
-#         return redirect('coins:user-cabinet', pk=pk)

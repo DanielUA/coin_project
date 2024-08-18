@@ -10,7 +10,7 @@ message #{{ message.id }}
     </p>
     <div class="p-5 border">
         <p>
-            {{message.text}}
+            {{message.text|escape}}
         </p>
     </div>
     

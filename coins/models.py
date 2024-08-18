@@ -125,9 +125,10 @@ class Message(models.Model):
     recipient = models.ForeignKey(User, related_name="received_messages", on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     is_read = models.BooleanField(default=False)
+    topic = models.CharField(default='without topic', max_length=128)
     
     def __str__(self):
-        return f"{self.author}"
+        return f"{self.author}: {self.topic}"
     
     class Meta: 
         ordering = ['-created']
