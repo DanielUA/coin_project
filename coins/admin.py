@@ -30,3 +30,7 @@ class CoinAdmin(admin.ModelAdmin):
 @admin.register(Box)
 class BoxAdmin(admin.ModelAdmin):
     list_display = ['name']
+
+@admin.register(Message)
+class MessageAdmin(admin.ModelAdmin):
+    list_display = ['author', 'recipient', 'is_read', 'created']

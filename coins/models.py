@@ -19,6 +19,10 @@ class UserProfile(models.Model):
     def exchanged_coins(self):
         return self.user.coins.filter(status='e')
     
+    def unread_messages_count(self):
+        return self.user.received_messages.filter(is_read=False).count()
+    
+
     
 class Continent(models.Model):
     name = models.CharField(max_length=150, unique=True)
@@ -115,3 +119,15 @@ class Offer(models.Model):
     status = models.CharField(max_length=1, choices=status_choices, default='c')
     created = models.DateTimeField(auto_now_add=True)
 
+class Message(models.Model):
+    text = models.TextField()
+    author = models.ForeignKey(User, related_name="created_messages", on_delete=models.CASCADE)
+    recipient = models.ForeignKey(User, related_name="received_messages", on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
+    
+    def __str__(self):
+        return f"{self.author}"
+    
+    class Meta: 
+        ordering = ['-created']

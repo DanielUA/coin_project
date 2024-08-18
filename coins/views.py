@@ -1,5 +1,5 @@
 from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.generic import TemplateView, DetailView, ListView
 from django.contrib.auth import logout, login, authenticate
@@ -16,6 +16,10 @@ class IndexView(TemplateView):
     
 class CoinDetailView(DetailView):
     model = Coin
+    extra_context = {
+        'form': MessageForm(),
+
+    }
 
     
 
@@ -124,6 +128,10 @@ class UserCabinetView(DetailView):
     model = User
     template_name = 'coins/user_cabinet.html'
     context_object_name = 'owner'
+    extra_context = {
+        'form': MessageForm(),
+    }
+
 
 def coin_change_status(request):
     pk = request.POST.get('pk')
@@ -151,3 +159,58 @@ def coin_sended(request):
     coin.status = 's'
     coin.save()
     return HttpResponseRedirect(reverse('coins:coins-to-send'))
+
+class MailBox(DetailView):
+    model = User
+    template_name = 'coins/mail_box.html'
+    context_object_name = 'owner'
+
+class MessageDetailView(DetailView):
+    model = Message
+    
+    def get_object(self, queryset=None):
+        object = super().get_object(queryset=queryset)
+        if self.request.user == object.recipient:
+            object.is_read = True
+            object.save()
+        return object
+
+def create_new_message(request, pk):
+    author_id = request.POST.get('author_id')
+    recipient_id = request.POST.get('recipient_id')    
+    f = MessageForm(request.POST)
+    new_message = f.save(commit=False)
+    new_message.author_id = author_id
+    new_message.recipient_id = recipient_id
+    new_message.save()
+    return HttpResponseRedirect(reverse('coins:coin-detail', args=[pk]))
+
+def message_from_cabinet(request, pk):
+    author_id = request.POST.get('author_id')
+    recipient_id = request.POST.get('recipient_id')    
+    f = MessageForm(request.POST)
+    new_message = f.save(commit=False)
+    new_message.author_id = author_id
+    new_message.recipient_id = recipient_id
+    new_message.save()
+    return HttpResponseRedirect(reverse('coins:user-cabinet', args=[pk]))
+
+# def message_from_cabinet(request, pk):
+#     if request.method == 'POST':
+#         f = MessageForm(request.POST)
+#         if f.is_valid():
+#             new_message = f.save(commit=False)
+#             new_message.author_id = request.POST.get('author_id')
+#             new_message.recipient_id = request.POST.get('recipient_id')
+#             new_message.save()
+#             return redirect('coins:coin-detail', pk=pk)
+#         else:
+#             print(f.errors)  # This will print the form errors to the console
+#             owner = get_object_or_404(User, pk=pk)
+#             return render(request, 'coins/user_cabinet.html', {
+#                 'owner': owner,
+#                 'form': f,
+#                 'error': 'There was an issue with your submission.'
+#             })
+#     else:
+#         return redirect('coins:user-cabinet', pk=pk)

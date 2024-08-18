@@ -54,6 +54,14 @@
           {% endif %} 
           <br>
           <a href="{% url 'coins:user-cabinet' pk=user.id %}">Personal cabinet</a>
+          
+          <br>
+            <a href="{% url 'coins:user-mail-box' pk=user.id %}">
+              mailbox
+              {% if user.profile.unread_messages_count %}
+              : ({{ user.profile.unread_messages_count }})
+              {% endif %}
+            </a>
           {% if user.is_superuser %}
           <div>
               <a href="{% url 'coins:coins-to-send' %}"> 

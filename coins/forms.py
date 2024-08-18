@@ -1,6 +1,9 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 
+from .models import Message
+
+
 
 class MyUserCreationForm(UserCreationForm):
     user_picture = forms.ImageField()
@@ -18,3 +21,9 @@ class MyUserCreationForm(UserCreationForm):
         for field_name, field in self.fields.items():
             field.widget.attrs['class'] = 'form-control'
 
+class MessageForm(forms.ModelForm):
+    class Meta:
+        model = Message
+        fields = ['text',]
+        labels = {'text': ""}
+        

@@ -30,15 +30,26 @@
             
        </p>
        <p class="fs-3">
-        Owner: {{ coin.owner }}         
+        Owner: <a href="{% url 'coins:user-cabinet' pk=coin.owner.id %}">{{ coin.owner }}</a>         
        </p>
        {% if user.is_authenticated and user != coin.owner %} 
-            <form action="{% url 'coins:offer-detail' %}" method="post">
-                {% csrf_token %}
-                <input class="btn btn-primary" type="submit" value="make offer">
-                <input type="hidden" name="coin_id" value="{{ coin.id }}">
-            </form>
-       {% endif %}                  
+       <form action="{% url 'coins:offer-detail' %}" method="post">
+           {% csrf_token %}
+           <input class="btn btn-primary" type="submit" value="make offer">
+           <input type="hidden" name="coin_id" value="{{ coin.id }}">
+        </form>
+        {% endif %}    
+        <br>              
+        {% if user.is_authenticated and user != coin.owner  %}
+             <h5>Create message to {{ coin.owner }}</h5>
+             <form action="{% url 'coins:create-new-message' pk=coin.id %}" method="post">
+                 {% csrf_token %}
+                 {{ form.as_p }}
+                 <input type="hidden" name="author_id" value="{{ user.id }}">
+                 <input type="hidden" name="recipient_id" value="{{ coin.owner.id }}">
+                 <input type="submit" value="send message" class="btn btn-primary">
+             </form>
+        {% endif %}
     </div>
 </div>
 
