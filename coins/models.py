@@ -119,6 +119,14 @@ class Offer(models.Model):
     status = models.CharField(max_length=1, choices=status_choices, default='c')
     created = models.DateTimeField(auto_now_add=True)
 
+class MultiOffer(models.Model):
+    coins_to_get = models.ManyToManyField(Coin, related_name='offers_get')
+    coins_to_give = models.ManyToManyField(Coin, related_name='offers_give')
+    author = models.ForeignKey(User, related_name='multi_offers_made', on_delete=models.CASCADE)
+    responder = models.ForeignKey(User, related_name='multi_offers_look', on_delete=models.CASCADE)
+    status = models.CharField(max_length=1, choices=status_choices, default='c')
+    created = models.DateTimeField(auto_now_add=True)
+
 class Message(models.Model):
     text = models.TextField()
     author = models.ForeignKey(User, related_name="created_messages", on_delete=models.CASCADE)

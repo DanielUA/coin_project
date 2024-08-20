@@ -53,6 +53,9 @@
   {% endfor %}
 {% endif %}
 {% if user.is_authenticated and user != owner %}
+<a href="{% url 'coins:multi-offer' pk=owner.id %}" class="btn btn-primary my-2">
+    Create multioffer 
+</a>
 <h5>Create message to {{ owner }}</h5>
 <form action="{% url 'coins:message-from-cabinet' pk=user.id %}" method="post">
     {% csrf_token %}

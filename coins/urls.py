@@ -28,4 +28,6 @@ urlpatterns = [
     path('message/<int:pk>/', views.MessageDetailView.as_view(), name='message-detail'),
     path('message/create/<int:pk>/', views.create_new_message, name='create-new-message'),
     path('message/cabinet/create/<int:pk>/', views.message_from_cabinet, name='message-from-cabinet'),
+    path('multi/offer/<int:pk>/', views.multi_offer_view, name='multi-offer'),
+    path('multi/offer/create/', views.create_new_multi_offer, name='create-multi-offer'),
 ]

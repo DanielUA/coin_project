@@ -201,3 +201,31 @@ def message_from_cabinet(request, pk):
     new_message.save()
     return HttpResponseRedirect(reverse('coins:user-cabinet', args=[pk]))
 
+def multi_offer_view(request, pk):
+    recipient = User.objects.get(id=pk)
+    author = request.user
+    context = {
+        'recipient': recipient,
+
+    }
+    return render(
+        request=request, 
+        template_name='coins/multi_offer.html',
+        context=context
+        )
+
+def create_new_multi_offer(request):
+    coins_to_get_ids = request.POST.getlist('coins_to_get_ids')
+    coins_to_get = Coin.objects.filter(id__in=coins_to_get_ids)
+    coins_to_give_ids = request.POST.getlist('coins_to_give_ids')
+    coins_to_give = Coin.objects.filter(id__in=coins_to_give_ids)
+    recipient_id = request.POST.get('recipient_id')
+    recipient = User.objects.get(id=recipient_id)
+    new_multi_offer = MultiOffer(
+        coins_to_get=coins_to_get,
+        coins_to_give=coins_to_give,
+        author=request.user,
+        recipient=recipient,
+    )
+    new_multi_offer.save()
+    return HttpResponseRedirect(reverse('coins:index'))
