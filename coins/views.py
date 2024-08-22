@@ -10,7 +10,7 @@ from .forms import *
 class IndexView(TemplateView):
     template_name = 'coins/index.html'
     extra_context = {
-        "coin_list": Coin.objects.filter(status='a').order_by('?'),
+        "coin_list": Coin.objects.filter(status='a'),
         "continent_list": Continent.objects.order_by("name"),
     }
     
@@ -112,8 +112,8 @@ def cancel_multi_offer(request, pk):
     multi_offer = get_object_or_404(MultiOffer, pk=pk)
     if request.method == 'POST':
         multi_offer.delete()
-        return redirect('coins:user-cabinet', pk=request.user.id)
-    return render(request, 'coins/cancel_multi_offer.html', {'multi_offer': multi_offer})
+    return redirect('coins:user-cabinet', pk=request.user.id)
+    # return render(request, 'coins/cancel_multi_offer.html', {'multi_offer': multi_offer})
     
 def cancel_offer(request, pk):
     offer = Offer.objects.get(id=pk)

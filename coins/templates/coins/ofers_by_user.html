@@ -5,6 +5,7 @@
 {% endblock %}
 
 {% block content %}
+
 {% for offer in object_list %}
 
     
@@ -40,6 +41,13 @@
             {% csrf_token %}
             <input type="submit" value="accept offer" class="btn btn-success">
             
+        </form>
+
+        <div class="my-3"></div>
+
+        <form action="{% url 'coins:cancel-multi-offer' pk=offer.id %}" method="post">
+            {% csrf_token %}
+            <input type="submit" value="cancel offer" class="btn btn-danger">
         </form>
     </div>       
 </div>

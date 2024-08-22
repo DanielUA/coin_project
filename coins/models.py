@@ -17,6 +17,14 @@ class UserProfile(models.Model):
         offers = MultiOffer.objects.filter(responder=self.user, status='c')
         return offers.exists()
 
+    def multi_offers_to_other_users_under_consideration(self):
+        offers = MultiOffer.objects.filter(author=self.user, status='c')
+        return offers
+    
+    def history_of_offers_by_user(self):
+        history = MultiOffer.objects.filter(author=self.user, status='d')
+        return history
+
     def active_coins(self):
         return self.user.coins.filter(status='a')
     

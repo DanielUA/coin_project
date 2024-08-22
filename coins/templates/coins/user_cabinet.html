@@ -65,38 +65,64 @@
     <input type="submit" value="send message" class="btn btn-primary">
 </form>
 {% endif %}
-<h4>My offer to ennother user</h4>
-{% if offers_made or multi_offers_made %}
-  <div class="row">
-    {% for offer in offers_made %}
-      <div class="col-12">
-        <p>
-          You suggested {{ offer.coin_to_give }} for {{ offer.coin_to_get }} user {{ offer.responder.username }} 
-          {% if offer.status == 'c' %}
-            <form action="{% url 'coins:cancel-offer' pk=offer.id %}" method="post">
-              {% csrf_token %}
-              <input type="submit" value="Cancel offer" class="btn btn-danger">
-            </form>
-          {% endif %}
-        </p>
-      </div>
-    {% endfor %}
 
-    {% for multi_offer in multi_offers_made %}
-      <div class="col-12">
-        <p>
-          You suggested {{ multi_offer.coins_to_give.all|join:', ' }} for {{ multi_offer.coins_to_get.all|join:', ' }} user {{ multi_offer.responder.username }}
-          {% if multi_offer.status == 'c' %}
-            <form action="{% url 'coins:cancel-multi-offer' pk=multi_offer.id %}" method="post">
-              {% csrf_token %}
-              <input type="submit" value="Cancel multioffer" class="btn btn-danger">
-            </form>
-          {% endif %}
-        </p>
-      </div>
-    {% endfor %}
+{% if owner == user and owner.profile.multi_offers_to_other_users_under_consideration %}
+
+<h4>My offers under consideration to another users ({{ owner.profile.multi_offers_to_other_users_under_consideration|length }}):</h4>
+
+{% for multi_offer in owner.profile.multi_offers_to_other_users_under_consideration %}
+
+<p class="fs-4">Offer #{{ multi_offer.id }} to {{ multi_offer.responder }} ({{ multi_offer.created|timesince }})</p>
+
+<p>{{ multi_offer.responder }}'s coins:</p>
+
+<div class="row">
+  {% for coin in multi_offer.coins_to_get.all %}
+  <div class="col-2 text-center">
+    <img src="{{ coin.img_front.url }}" class="w-75">
+    <p>{{ coin }}</p>
   </div>
+  {% endfor %}
+</div>
+
+<hr>
+
+<p>your coins:</p>
+<div class="row">
+  {% for coin in multi_offer.coins_to_give.all %}
+  <div class="col-2 text-center">
+    <img src="{{ coin.img_front.url }}" class="w-75">
+    <p>{{ coin }}</p>
+  </div>
+  {% endfor %}
+</div>
+
+{% endfor %}
+
+{% for coins in owner.profile.history_of_offers_by_user %}
+<h4>History of offers ({{ owner.profile.history_of_offers_by_user|length }}):</h4>
+<p class="fs-4">Offer #{{ coins.id }} to {{ coins.responder }} ({{ coins.created }})</p>
+<p> coin(s) received from {{ coins.responder }}</p>
+<div class="row">
+  {% for coin in coins.coins_to_get.all %}
+  <div class="col-2 text-center">
+    <img src="{{ coin.img_front.url }}" class="w-75">
+    <p>{{ coin }}</p>
+  </div>
+  {% endfor %}
+</div>
+<p>received coins(s) as a result of exchange</p>
+<div class="row">
+  {% for coin in coins.coins_to_give.all %}
+  <div class="col-2 text-center">
+    <img src="{{ coin.img_front.url }}" class="w-75">
+    <p>{{ coin }}</p>
+  </div>
+  {% endfor %}
+</div>
+{% endfor%}
 
 {% endif %}
+
 
 {% endblock %}
