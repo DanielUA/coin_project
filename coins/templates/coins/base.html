@@ -46,7 +46,9 @@
           {% if user.is_staff %}
           <br />
           <a href="/admin/" target="_blank"> admin panel </a>
-          {% endif %} {% if user.profile.has_offers_under_consideration %}
+          {% endif %} 
+          
+          {% if user.profile.has_multi_offers_under_consideration %}
           <br />
           <a href="{% url 'coins:user-offers' %}">
             You have offers to consider

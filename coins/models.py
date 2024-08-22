@@ -13,6 +13,10 @@ class UserProfile(models.Model):
         offers = Offer.objects.filter(responder=self.user, status='c')
         return offers.exists()
     
+    def has_multi_offers_under_consideration(self):
+        offers = MultiOffer.objects.filter(responder=self.user, status='c')
+        return offers.exists()
+
     def active_coins(self):
         return self.user.coins.filter(status='a')
     

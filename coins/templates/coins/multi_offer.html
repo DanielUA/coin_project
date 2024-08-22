@@ -8,6 +8,7 @@ multioffer to {{recipient}}
 <form action="{% url 'coins:create-multi-offer' %}" method="post">
     {% csrf_token %}
     <input type="submit" value="make offer" class="btn btn-primary">
+    
     <div class="row">
     <div class="col-6">
         <h3>{{ recipient}}'s coins</h3>
@@ -29,7 +30,7 @@ multioffer to {{recipient}}
                     {{ coin }}
                 </div>
             {% endfor %}
-        
+                
         </div>
     </div>
     <input type="hidden" name="recipient_id" value="{{ recipient.id }}">

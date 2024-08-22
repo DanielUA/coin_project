@@ -42,6 +42,18 @@ def offer_detail(request):
     coin_id = request.POST.get('coin_id')
     return HttpResponseRedirect(reverse('coins:coin-make-offer', kwargs={"pk": coin_id}))
 
+def user_cabinet_view(request, pk):
+    owner = get_object_or_404(User, id=pk)
+    user_offers = Offer.objects.filter(author=owner)
+    multi_offers = MultiOffer.objects.filter(author=owner)
+
+    context = {
+        'owner': owner,
+        'user_offers': user_offers,
+        'multi_offers': multi_offers,
+    }
+
+    return render(request, 'coins/user_cabinet.html', context)
 
 class CoinMakeOfferView(DetailView):
     model = Coin
@@ -72,9 +84,38 @@ def offers_by_user(request):
     context = {
         'object_list': Offer.objects.filter(responder=request.user, status='c')
     }
-    return render(request, template_name="coins/ofers_by_user.html", context=context)
+    return render(request=request, template_name="coins/ofers_by_user.html", context=context)
 
-def remove_offer(request, pk):
+def multi_offers_by_user(request):
+    context = {
+        'object_list': MultiOffer.objects.filter(responder=request.user, status='c')
+    }
+    return render(request=request, template_name="coins/ofers_by_user.html", context=context)
+
+def accept_multi_offer(request, pk):
+    multi_offer = MultiOffer.objects.get(id=pk)
+    coins_to_get = multi_offer.coins_to_get.all()
+    coins_to_give = multi_offer.coins_to_give.all()
+    for coin_to_get in coins_to_get:        
+        coin_to_get.owner = multi_offer.author
+        coin_to_get.status = 'e'
+        coin_to_get.save()
+    for coin_to_give in coins_to_give:   
+        coin_to_give.owner = multi_offer.responder
+        coin_to_give.status = 'e'  
+        coin_to_give.save() 
+    multi_offer.status = 'd'    
+    multi_offer.save()
+    return HttpResponseRedirect(reverse('coins:index'))
+
+def cancel_multi_offer(request, pk):
+    multi_offer = get_object_or_404(MultiOffer, pk=pk)
+    if request.method == 'POST':
+        multi_offer.delete()
+        return redirect('coins:user-cabinet', pk=request.user.id)
+    return render(request, 'coins/cancel_multi_offer.html', {'multi_offer': multi_offer})
+    
+def cancel_offer(request, pk):
     offer = Offer.objects.get(id=pk)
     offer.delete()
     return HttpResponseRedirect(reverse('coins:index'))
@@ -206,26 +247,25 @@ def multi_offer_view(request, pk):
     author = request.user
     context = {
         'recipient': recipient,
-
     }
     return render(
         request=request, 
         template_name='coins/multi_offer.html',
         context=context
-        )
+    )
 
 def create_new_multi_offer(request):
     coins_to_get_ids = request.POST.getlist('coins_to_get_ids')
     coins_to_get = Coin.objects.filter(id__in=coins_to_get_ids)
     coins_to_give_ids = request.POST.getlist('coins_to_give_ids')
     coins_to_give = Coin.objects.filter(id__in=coins_to_give_ids)
-    recipient_id = request.POST.get('recipient_id')
-    recipient = User.objects.get(id=recipient_id)
+    responder_id = request.POST.get('recipient_id')
+    responder = User.objects.get(id=responder_id)
     new_multi_offer = MultiOffer(
-        coins_to_get=coins_to_get,
-        coins_to_give=coins_to_give,
         author=request.user,
-        recipient=recipient,
+        responder=responder,
     )
     new_multi_offer.save()
+    new_multi_offer.coins_to_get.add(*coins_to_get)
+    new_multi_offer.coins_to_give.add(*coins_to_give)
     return HttpResponseRedirect(reverse('coins:index'))

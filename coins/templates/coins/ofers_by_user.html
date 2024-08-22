@@ -6,38 +6,45 @@
 
 {% block content %}
 {% for offer in object_list %}
-    <div>  
-        <h3>Coin offer: {{ offer.id }}</h3> 
-        <div class="row" >
-            <div class="col-3">
-                <img src="{{ offer.coin_to_get.img_front.url }}" class="w-100">
-                {{ offer.coin_to_get }}
-                
-            </div>  
-            <div class="col-3">
-                <img src="{{ offer.coin_to_give.img_front.url }}" class="w-100">
-                {{ offer.coin_to_give }}                
-            </div>    
-            <div class="col-3 pt-5">
-                <div>
-                    <form action="{% url 'coins:accept-offer' pk=offer.id %}" method="post"> 
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-success px-5 py-2">
-                            <i class="fa-solid fa-check"></i>
-                        </button>                        
-                    </form>
-                </div>
-                <br>
-                <div>
-                    <form action="{% url 'coins:remove-offer' pk=offer.id %}" method="post"> 
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger px-5 py-2">
-                            <i class="fa-solid fa-xmark"></i>
-                        </button>                        
-                    </form>
-                </div>
-            </div>
+
+    
+<h3> Offer #{{ offer.id }} from {{ offer.author }}</h3>
+<p> {{ offer.created }}</p> 
+<div class="row">
+    <div class="col-4">
+        <h4> Your coins that {{ offer.author }} is interested in exchanging</h4>
+        {% for coin in offer.coins_to_get.all %}
+        <div>
+            <img src="{{ coin.img_front.url }}" alt="" height="150">
+        <p>
+            {{ coin }}
+        </p>
         </div>
-    </div>
+        
+        {% endfor %}
+    </div> 
+    <div class="col-1"></div>
+    <div class="col-4">
+        <h4> Сoins that are offered to you </h4>
+        {% for coin in offer.coins_to_give.all %}
+        <div>
+            <img src="{{ coin.img_front.url }}" alt="" height="150">
+        <p>
+            {{ coin }}
+        </p>
+        </div>                
+        {% endfor %}
+    </div>    
+    <div class="col-3">
+        <form action="{% url 'coins:accept-multi-offer' pk=offer.id %}" method="post">
+            {% csrf_token %}
+            <input type="submit" value="accept offer" class="btn btn-success">
+            
+        </form>
+    </div>       
+</div>
+
+
+
 {% endfor %}
 {% endblock %}
