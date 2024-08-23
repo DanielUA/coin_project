@@ -7,21 +7,36 @@ from django.contrib.auth import logout, login, authenticate
 from .models import *
 from .forms import *
 
-class IndexView(TemplateView):
+# def index_view(request):
+#     context = {
+#         "coin_list": Coin.objects.filter(status='a').order_by('-views_counter'),
+#         "continent_list": Continent.objects.order_by("name"),
+#     }
+#     return render(
+#         request,
+#         template_name='coins/index.html',
+#         context=context
+#     )
+
+class IndexView(ListView):
+    queryset = Coin.objects.filter(status='a').order_by('-views_counter')
+    context_object_name = "coin_list"
     template_name = 'coins/index.html'
     extra_context = {
-        "coin_list": Coin.objects.filter(status='a'),
         "continent_list": Continent.objects.order_by("name"),
     }
-    
+    paginate_by = 12
+
 class CoinDetailView(DetailView):
-    model = Coin
+    model = Coin    
     extra_context = {
         'form': MessageForm(),
-
-    }
-
-    
+    } 
+    def get_object(self, queryset=None):
+        object = super().get_object(queryset=queryset)
+        object.views_counter += 1
+        object.save()
+        return object   
 
 def signin(request):
     username = request.POST.get('username')
@@ -30,13 +45,10 @@ def signin(request):
     if user is not None:
         login(request, user) 
     return HttpResponseRedirect(reverse('coins:index'))
-
        
 def signout(request):
-    # add_countries()
     logout(request) 
     return HttpResponseRedirect(reverse('coins:index'))
-
 
 def offer_detail(request):
     coin_id = request.POST.get('coin_id')

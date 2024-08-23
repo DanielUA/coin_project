@@ -7,7 +7,9 @@
 {% block content %}
 <div class="row" >
     <div class="col-6 text-center">
-        <img class="w-75" src="{{ coin.img_front.url }}" alt="">
+        <a href="{{ coin.img_front.url }}" target="_blank">
+            <img class="w-75" src="{{ coin.img_front.url }}" alt="">            
+        </a>
         <div class="row">
             <div class="col-4">
                 <img class="w-100" src="{{ coin.img_back.url }}" alt="">                

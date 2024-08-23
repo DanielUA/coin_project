@@ -99,8 +99,10 @@
 
 {% endfor %}
 
-{% for coins in owner.profile.history_of_offers_by_user %}
+{% endif %}
+
 <h4>History of offers ({{ owner.profile.history_of_offers_by_user|length }}):</h4>
+{% for coins in owner.profile.history_of_offers_by_user %}
 <p class="fs-4">Offer #{{ coins.id }} to {{ coins.responder }} ({{ coins.created }})</p>
 <p> coin(s) received from {{ coins.responder }}</p>
 <div class="row">
@@ -121,8 +123,6 @@
   {% endfor %}
 </div>
 {% endfor%}
-
-{% endif %}
 
 
 {% endblock %}

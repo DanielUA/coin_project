@@ -39,6 +39,9 @@
           </a>
         </div>
         <div class="col-2">
+          {{ num_coins }}
+        </div>
+        <div class="col-2">
           {% if user.is_authenticated %} {{ user }}
           <img class="w-25" src="{{ user.profile.user_pic.url }}" alt="logo" />
           <br />

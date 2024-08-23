@@ -46,6 +46,9 @@ class Continent(models.Model):
     def get_coins(self):
         return Coin.objects.filter(country__continent=self)
     
+    def get_active_coins(self):
+        return Coin.objects.filter(country__continent=self, status="a")
+        
     def get_coutries_has_coins(self):
 
         return self.countries.filter(coins__isnull=False).distinct()
@@ -106,6 +109,7 @@ class Coin(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='coins')
     box = models.ForeignKey('Box', on_delete=models.SET_NULL, blank=True, null=True, related_name='coins')
     status = models.CharField(max_length=1, choices=status_choices_coin, default='a')
+    views_counter = models.IntegerField(default=0)
     
     class Meta:
         verbose_name = 'Coin'
