@@ -35,5 +35,11 @@ urlpatterns = [
     path('multi/offer/<int:pk>/', views.multi_offer_view, name='multi-offer'),
     path('multi/offer/create/', views.create_new_multi_offer, name='create-multi-offer'),
     path('multi_offer/cancel/<int:pk>/', views.cancel_multi_offer, name='cancel-multi-offer'),
+    path('accounts/password_change/', views.MyPasswordChangeView.as_view(), name='password-change'),
+    path('accounts/password_change/done/', views.MyPasswordChangeDoneView.as_view(), name='password-change-done'),
+    path('accounts/password/reset/', views.MyPasswordResetView.as_view(), name='password-reset'),
+    # path('cart/', views.cart_view, name='cart'),
+    # path('cart/update/', views.update_cart, name='update_cart'),
+    # path('checkout/', views.checkout_view, name='checkout'),  # You'll need to implement the checkout_view
 
 ]

@@ -1,22 +1,15 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.views.generic import TemplateView, DetailView, ListView
 from django.contrib.auth import logout, login, authenticate
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
+from django.contrib.auth.views import PasswordChangeView, PasswordChangeDoneView, PasswordResetView
 
 from .models import *
 from .forms import *
 
-# def index_view(request):
-#     context = {
-#         "coin_list": Coin.objects.filter(status='a').order_by('-views_counter'),
-#         "continent_list": Continent.objects.order_by("name"),
-#     }
-#     return render(
-#         request,
-#         template_name='coins/index.html',
-#         context=context
-#     )
 
 class IndexView(ListView):
     queryset = Coin.objects.filter(status='a').order_by('-views_counter')
@@ -88,10 +81,7 @@ def make_offer(request):
        
     return HttpResponseRedirect(reverse('coins:index'))
 
-# class OfferByUserListView(ListView):
-#     model = Offer
-#     template_name = 'coins/ofers_by_user.html'
-    
+ 
 def offers_by_user(request):
     context = {
         'object_list': Offer.objects.filter(responder=request.user, status='c')
@@ -125,7 +115,6 @@ def cancel_multi_offer(request, pk):
     if request.method == 'POST':
         multi_offer.delete()
     return redirect('coins:user-cabinet', pk=request.user.id)
-    # return render(request, 'coins/cancel_multi_offer.html', {'multi_offer': multi_offer})
     
 def cancel_offer(request, pk):
     offer = Offer.objects.get(id=pk)
@@ -281,3 +270,36 @@ def create_new_multi_offer(request):
     new_multi_offer.coins_to_get.add(*coins_to_get)
     new_multi_offer.coins_to_give.add(*coins_to_give)
     return HttpResponseRedirect(reverse('coins:index'))
+
+# @login_required
+# def cart_view(request):
+#     user_profile = request.user.profile
+#     context = {
+#         'user_profile': user_profile,
+#         'total_coins_sent': user_profile.total_coins_sent(),
+#         'total_trades': user_profile.total_trades(),
+#         'total_cost': user_profile.total_cost(),
+#     }
+#     return render(request, 'coins/cart.html', context)
+
+# @require_POST
+# @login_required
+# def update_cart(request):
+#     user_profile = request.user.profile
+#     user_profile.coin_holders = request.POST.get('coin_holders', 0)
+#     user_profile.holder_pages = request.POST.get('holder_pages', 0)
+#     user_profile.albums = request.POST.get('albums', 0)
+#     user_profile.save()
+#     return HttpResponseRedirect(reverse('coins:cart'))
+
+class MyPasswordChangeView(PasswordChangeView):
+    template_name = "coins/password_change_form.html"
+    success_url = reverse_lazy("coins:password-change-done")
+
+class MyPasswordChangeDoneView(PasswordChangeDoneView):
+    template_name = "coins/password_change_done.html"
+
+class MyPasswordResetView(PasswordResetView):
+    template_name = "coins/password_reset_form.html"
+    email_template_name = "coins/password_reset_email.html"
+    

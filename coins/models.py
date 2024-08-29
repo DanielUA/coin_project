@@ -9,6 +9,13 @@ class UserProfile(models.Model):
     addres = models.CharField(max_length=150)
     city =  models.CharField(max_length=20)
 
+
+    # New Fields
+    # coin_holders = models.PositiveIntegerField(default=0)
+    # holder_pages = models.PositiveIntegerField(default=0)
+    # albums = models.PositiveIntegerField(default=0)
+    # postage_fee = models.DecimalField(max_digits=6, decimal_places=2, default=0.00)
+    
     def has_offers_under_consideration(self):
         offers = Offer.objects.filter(responder=self.user, status='c')
         return offers.exists()
@@ -34,7 +41,21 @@ class UserProfile(models.Model):
     def unread_messages_count(self):
         return self.user.received_messages.filter(is_read=False).count()
     
+    # New Methods
+    # def total_coins_sent(self):
+    #     return self.user.coins.filter(status='s').count()
 
+    # def total_trades(self):
+    #     return Offer.objects.filter(author=self.user, status='d').count() + MultiOffer.objects.filter(author=self.user, status='d').count()
+
+    # def total_cost(self):
+    #     photo_fee = self.total_coins_sent() * 0.15
+    #     exchange_fee = self.total_trades() * 0.35
+    #     additional_services_cost = (self.coin_holders * 0.50) + (self.holder_pages * 1.00) + (self.albums * 10.00)
+    #     return photo_fee + exchange_fee + additional_services_cost + self.postage_fee
+
+    def __str__(self):
+        return self.user.username
     
 class Continent(models.Model):
     name = models.CharField(max_length=150, unique=True)
