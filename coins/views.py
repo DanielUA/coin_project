@@ -5,7 +5,7 @@ from django.views.generic import TemplateView, DetailView, ListView
 from django.contrib.auth import logout, login, authenticate
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
-from django.contrib.auth.views import PasswordChangeView, PasswordChangeDoneView, PasswordResetView
+from django.contrib.auth.views import PasswordChangeView, PasswordChangeDoneView, PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
 
 from .models import *
 from .forms import *
@@ -302,4 +302,15 @@ class MyPasswordChangeDoneView(PasswordChangeDoneView):
 class MyPasswordResetView(PasswordResetView):
     template_name = "coins/password_reset_form.html"
     email_template_name = "coins/password_reset_email.html"
-    
+    subject_template_name = "coins/password_reset_subject.txt"
+    success_url = reverse_lazy("coins:password-reset-done")
+
+class MyPasswordResetDoneView(PasswordResetDoneView):
+    template_name = "coins/password_reset_done.html"
+
+class MyPasswordResetConfirmView(PasswordResetConfirmView):
+    template_name = "coins/password_reset_confirm.html"
+    success_url = reverse_lazy("coins:password-reset-complete")
+
+class MyPasswordResetCompleteView(PasswordResetCompleteView):
+    template_name = "coins/password_reset_complete.html"

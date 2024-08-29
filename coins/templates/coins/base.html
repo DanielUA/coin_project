@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 {% load static %}
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link
@@ -26,70 +26,75 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
     />
     {% block style %}{% endblock %} 
-  </head>
-  <body>
-    <div class="container">
-      <div class="row justify-content-between">
-        <div class="col-3">
-          <a href="{% url 'coins:index'%}">
-            <img
-              class="w-100"
-              src="{% static 'coins/img/coins.png' %}"
-              alt="logo"
-            />
-          </a>
-        </div>
-        <div class="col-2">
-          {{ num_coins }}
-        </div>
-        <div class="col-2">
-          {% if user.is_authenticated %} {{ user }}
-          <img class="w-25" src="{{ user.profile.user_pic.url }}" alt="logo" />
-          <br />
-          <a href="{% url 'coins:sign-out' %}"> sign out </a>
-          {% if user.is_staff %}
-          <br />
-          <a href="/admin/" target="_blank"> admin panel </a>
-          {% endif %} 
-          
-          {% if user.profile.has_multi_offers_under_consideration %}
-          <br />
-          <a href="{% url 'coins:user-offers' %}">
-            You have offers to consider
-          </a>
-          {% endif %} 
-          <br>
-          <a href="{% url 'coins:user-cabinet' pk=user.id %}">Personal cabinet</a>
-          
-          <br>
-            <a href="{% url 'coins:user-mail-box' pk=user.id %}">
-              mailbox
-              {% if user.profile.unread_messages_count %}
-              : ({{ user.profile.unread_messages_count }})
-              {% endif %}
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'coins:index'%}">
+                <img
+                  src="{% static 'coins/img/coins.png' %}"
+                  alt="logo"
+                  class="d-inline-block align-text-top"
+                  style="width: 170px;"
+                />
             </a>
-          {% if user.is_superuser %}
-          <div>
-              <a href="{% url 'coins:coins-to-send' %}"> 
-                  coins for send 
-              </a>                
-          </div>   
-          {% endif %}
-          {% else %}
-          <button
-            type="button"
-            class="btn btn-primary"
-            data-bs-toggle="modal"
-            data-bs-target="#modal-login"
-          >
-            Sign in
-          </button>
-          <br />
-          <a href="{% url 'coins:create-account-page' %}"> Create account </a>
-          {% endif %}
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'coins:user-cabinet' pk=user.id %}">Personal Cabinet</a>
+                    </li>
+                    {% if user.profile.has_multi_offers_under_consideration %}
+                    <li class="nav-item">
+                        <a class="nav-link text-warning" href="{% url 'coins:user-offers' %}">Offers to Consider</a>
+                    </li>
+                    {% endif %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'coins:user-mail-box' pk=user.id %}">
+                            Mailbox {% if user.profile.unread_messages_count %}: ({{ user.profile.unread_messages_count }}){% endif %}
+                        </a>
+                    </li>
+                    {% if user.is_staff %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/" target="_blank">Admin Panel</a>
+                    </li>
+                    {% endif %}
+                    {% if user.is_superuser %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'coins:coins-to-send' %}">Coins for Send</a>
+                    </li>
+                    {% endif %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'coins:sign-out' %}">Sign Out</a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <button
+                            type="button"
+                            class="btn btn-primary"
+                            data-bs-toggle="modal"
+                            data-bs-target="#modal-login"
+                        >
+                            Sign in
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'coins:create-account-page' %}">Create Account</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'coins:password-reset' %}">Reset Password</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
         </div>
-      </div>
-      {% block content %}{% endblock %}
+    </nav>
+
+    <div class="container">
+        {% block content %}{% endblock %}
     </div>
 
     <!-- Modal -->
@@ -106,7 +111,7 @@
           <div class="modal-content">
             <div class="modal-header">
               <h1 class="modal-title fs-5" id="exampleModalLabel">
-                Modal title
+                Sign In
               </h1>
               <button
                 type="button"
@@ -120,13 +125,13 @@
                 class="form-control my-2"
                 type="text"
                 name="username"
-                placeholder="username"
+                placeholder="Username"
               />
               <input
                 class="form-control my-2"
                 type="password"
                 name="password"
-                placeholder="password"
+                placeholder="Password"
               />
             </div>
             <div class="modal-footer">
@@ -137,13 +142,11 @@
               >
                 Close
               </button>
-              <button type="submit" class="btn btn-primary">Sign in</button>
-             
+              <button type="submit" class="btn btn-primary">Sign In</button>
             </div>
-
           </div>
         </form>
       </div>
     </div>
-  </body>
+</body>
 </html>
